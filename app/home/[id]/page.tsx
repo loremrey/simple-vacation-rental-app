@@ -10,8 +10,11 @@ import prisma from '@/lib/db';
 import { getKindeServerSession } from '@kinde-oss/kinde-auth-nextjs/server';
 import Image from 'next/image';
 import Link from 'next/link';
+import { unstable_noStore as noStore } from 'next/cache';
 
 async function getData(homeId: string) {
+	noStore();
+
 	const data = await prisma.home.findUnique({
 		where: {
 			id: homeId,
@@ -65,7 +68,9 @@ export default async function HomeRoute({ params }: { params: { id: string } }) 
 						<p>{data?.guests} Guests</p> * <p>{data?.bedrooms} Bedrooms</p> * <p>{data?.bathrooms} Bathrooms</p>
 					</div>
 					<div className="flex gap-x-2 text-muted-foreground">
-						<p><span className='text-black font-medium'>${data?.price}</span> Night</p>
+						<p>
+							<span className="text-black font-medium">${data?.price}</span> Night
+						</p>
 					</div>
 
 					<div className="flex items-center mt-6">
@@ -97,7 +102,7 @@ export default async function HomeRoute({ params }: { params: { id: string } }) 
 					<input type="hidden" name="userId" value={user?.id} />
 					<SelectCalendar reservation={data?.Reservation} />
 					{user?.id ? (
-						<ReservationSubmitButton/>
+						<ReservationSubmitButton />
 					) : (
 						<Button className="w-full" asChild>
 							<Link href="/api/auth/login">Make a Reservation</Link>
